@@ -24,7 +24,7 @@ jobs:
 
       - name: Run the application in the background
         run: |
-          nohup dotnet run --project ./MyProject.csproj --configuration Release --no-build &
+          nohup dotnet run --project ./WebApi.csproj --configuration Release --no-build &
           echo $! > app.pid
         env:
           ASPNETCORE_ENVIRONMENT: Development
