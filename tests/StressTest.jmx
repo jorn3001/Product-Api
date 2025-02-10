@@ -37,7 +37,7 @@
           </elementProp>
           <stringProp name="HTTPSampler.domain">localhost</stringProp>
           <stringProp name="HTTPSampler.port">5193</stringProp>
-          <stringProp name="HTTPSampler.path">/weatherforecast</stringProp>
+          <stringProp name="HTTPSampler.path">/api/products</stringProp>
           <stringProp name="HTTPSampler.method">GET</stringProp>
           <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
           <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
