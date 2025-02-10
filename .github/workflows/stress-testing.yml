@@ -64,7 +64,7 @@ jobs:
     - name: Upload JMeter report
       uses: actions/upload-artifact@v3
       with:
-        name: jmeter-report
+        name: jmeter-report-${{ matrix.runs-on }}
         path: ./test-results/report
 
     - name: Stop application
