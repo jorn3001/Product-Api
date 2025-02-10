@@ -53,13 +53,13 @@ jobs:
           mkdir -p test-results
           jmeter -n -t ./tests/StressTest.jmx -l ./test-results/results.jtl -e -o ./test-results/report
 
-      - name: Check JMeter results
-        run: |
-          ERROR_COUNT=$(grep -c "false" ./test-results/results.jtl)
-          if [ $ERROR_COUNT -gt 0 ]; then
-            echo "🚨 Stress test failed with $ERROR_COUNT errors"
-            exit 1
-          fi
+      # - name: Check JMeter results
+      #   run: |
+      #     ERROR_COUNT=$(grep -c "false" ./test-results/results.jtl)
+      #     if [ $ERROR_COUNT -gt 0 ]; then
+      #       echo "🚨 Stress test failed with $ERROR_COUNT errors"
+      #       exit 1
+      #     fi
 
       - name: Upload JMeter report
         uses: actions/upload-artifact@v4

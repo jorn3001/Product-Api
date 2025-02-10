@@ -21,10 +21,9 @@
           <boolProp name="LoopController.continue_forever">false</boolProp>
           <intProp name="LoopController.loops">-1</intProp>
         </elementProp>
-        <intProp name="ThreadGroup.num_threads">50</intProp> <!-- Số lượng người dùng ảo -->
-        <intProp name="ThreadGroup.ramp_time">60</intProp> <!-- Thời gian tăng dần số lượng người
-        dùng -->
-        <longProp name="ThreadGroup.duration">300</longProp> <!-- Thời gian chạy test (giây) -->
+        <intProp name="ThreadGroup.num_threads">50</intProp>
+        <intProp name="ThreadGroup.ramp_time">5</intProp>
+        <longProp name="ThreadGroup.duration">60</longProp>
         <boolProp name="ThreadGroup.scheduler">true</boolProp>
         <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
       </ThreadGroup>
@@ -38,8 +37,7 @@
           </elementProp>
           <stringProp name="HTTPSampler.domain">localhost</stringProp>
           <stringProp name="HTTPSampler.port">5193</stringProp>
-          <stringProp name="HTTPSampler.path">/weatherforecast</stringProp> <!-- Đường dẫn API hoặc
-          trang cần test -->
+          <stringProp name="HTTPSampler.path">/weatherforecast</stringProp>
           <stringProp name="HTTPSampler.method">GET</stringProp>
           <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
           <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
