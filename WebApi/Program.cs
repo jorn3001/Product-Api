@@ -1,15 +1,7 @@
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.Identity.Web;
-using Microsoft.Identity.Abstractions;
-using Microsoft.Identity.Web.Resource;
+using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddMicrosoftIdentityWebApi(builder.Configuration.GetSection("AzureAd"));
-builder.Services.AddAuthorization();
 
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
@@ -20,11 +12,20 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
+    app.UseSwaggerUI(options =>
+    {
+        options.SwaggerEndpoint("/openapi/v1.json", "My API");
+    });
+    app.UseReDoc(options =>
+    {
+        options.SpecUrl("/openapi/v1.json");
+    });
+
+    app.MapScalarApiReference();
 }
 
 app.UseHttpsRedirection();
 
-var scopeRequiredByApi = app.Configuration["AzureAd:Scopes"] ?? "";
 var summaries = new[]
 {
     "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
@@ -32,7 +33,7 @@ var summaries = new[]
 
 app.MapGet("/weatherforecast", (HttpContext httpContext) =>
     {
-        httpContext.VerifyUserHasAnyAcceptedScope(scopeRequiredByApi);
+      //  httpContext.VerifyUserHasAnyAcceptedScope(scopeRequiredByApi);
 
         var forecast = Enumerable.Range(1, 5).Select(index =>
                 new WeatherForecast
@@ -45,8 +46,7 @@ app.MapGet("/weatherforecast", (HttpContext httpContext) =>
         return forecast;
     })
     .WithName("GetWeatherForecast")
-    .WithOpenApi()
-    .RequireAuthorization();
+    .WithOpenApi();
 
 app.Run();
 
