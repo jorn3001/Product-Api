@@ -2,71 +2,71 @@ name: .NET CI/CD with JMeter Stress Test
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    - name: Setup .NET SDK
-      uses: actions/setup-dotnet@v3
-      with:
-        dotnet-version: '8.0.x'
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: "8.0.x"
 
-    - name: Build the application
-      run: dotnet build --configuration Release
+      - name: Build the application
+        run: dotnet build --configuration Release
 
-    - name: Run the application in the background
-      run: |
-        nohup dotnet run --project ./MyProject.csproj --configuration Release --no-build &
-        echo $! > app.pid
-      env:
-        ASPNETCORE_ENVIRONMENT: Development
+      - name: Run the application in the background
+        run: |
+          nohup dotnet run --project ./MyProject.csproj --configuration Release --no-build &
+          echo $! > app.pid
+        env:
+          ASPNETCORE_ENVIRONMENT: Development
 
-    - name: Wait for application to start
-      run: |
-        for i in {1..10}; do
-          if curl -s http://localhost:5000/health; then
-            exit 0
-          fi
-          sleep 5
-        done
-        echo "Application failed to start"
-        exit 1
-
-    - name: Install JMeter and Java
-      run: |
-        sudo apt-get update -y
-        sudo apt-get install -y openjdk-17-jdk
-        wget https://archive.apache.org/dist/jmeter/binaries/apache-jmeter-5.6.2.zip
-        unzip apache-jmeter-5.6.2.zip
-        echo "$GITHUB_WORKSPACE/apache-jmeter-5.6.2/bin" >> $GITHUB_PATH
-
-    - name: Run JMeter stress test
-      run: |
-        mkdir -p test-results
-        jmeter -n -t ./tests/StressTest.jmx -l ./test-results/results.jtl -e -o ./test-results/report
-
-    - name: Check JMeter results
-      run: |
-        ERROR_COUNT=$(grep -c "false" ./test-results/results.jtl)
-        if [ $ERROR_COUNT -gt 0 ]; then
-          echo "🚨 Stress test failed with $ERROR_COUNT errors"
+      - name: Wait for application to start
+        run: |
+          for i in {1..10}; do
+            if curl -s http://localhost:5000/health; then
+              exit 0
+            fi
+            sleep 5
+          done
+          echo "Application failed to start"
           exit 1
-        fi
 
-    - name: Upload JMeter report
-      uses: actions/upload-artifact@v3
-      with:
-        name: jmeter-report-${{ matrix.runs-on }}
-        path: ./test-results/report
+      - name: Install JMeter and Java
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install -y openjdk-17-jdk
+          wget https://archive.apache.org/dist/jmeter/binaries/apache-jmeter-5.6.2.zip
+          unzip apache-jmeter-5.6.2.zip
+          echo "$GITHUB_WORKSPACE/apache-jmeter-5.6.2/bin" >> $GITHUB_PATH
 
-    - name: Stop application
-      run: |
-        kill $(cat app.pid) || true
+      - name: Run JMeter stress test
+        run: |
+          mkdir -p test-results
+          jmeter -n -t ./tests/StressTest.jmx -l ./test-results/results.jtl -e -o ./test-results/report
+
+      - name: Check JMeter results
+        run: |
+          ERROR_COUNT=$(grep -c "false" ./test-results/results.jtl)
+          if [ $ERROR_COUNT -gt 0 ]; then
+            echo "🚨 Stress test failed with $ERROR_COUNT errors"
+            exit 1
+          fi
+
+      - name: Upload JMeter report
+        uses: actions/upload-artifact@v4
+        with:
+          name: jmeter-report-${{ matrix.runs-on }}
+          path: ./test-results/report
+
+      - name: Stop application
+        run: |
+          kill $(cat app.pid) || true
