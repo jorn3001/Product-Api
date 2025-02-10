@@ -5,7 +5,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
-
+builder.Services.AddHealthChecks();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -30,7 +30,7 @@ var summaries = new[]
 {
     "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
 };
-
+app.MapHealthChecks("/health");
 app.MapGet("/weatherforecast", (HttpContext httpContext) =>
     {
       //  httpContext.VerifyUserHasAnyAcceptedScope(scopeRequiredByApi);
